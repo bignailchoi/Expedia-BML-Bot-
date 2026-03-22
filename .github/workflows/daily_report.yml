@@ -1,0 +1,23 @@
+name: Daily BML Report
+on:
+  schedule:
+    - cron: '0 0 * * *' # UTC 기준 00:00 (한국 시간 오전 9시)
+  workflow_dispatch: # 수동 실행 버튼 활성화
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          pip install pandas playwright requests
+          playwright install chromium
+      - name: Run BML Agent
+        env:
+          GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
+        run: python automation.py
